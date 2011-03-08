@@ -31,7 +31,10 @@ my %dispatch = (
 
 sub new {
     my $class = shift;
-    return bless({ pdf => PDF::API2->new }, $class);
+    return bless({
+		pdf			=> PDF::API2->new,
+		outlines	=> {},
+		outline_id	=> 0 }, $class);
 }
 
 sub open {
@@ -251,7 +254,34 @@ sub add_weblink {
 }
 
 sub add_bookmark {
-    die "->add_bookmark is not implemented yet for pdfapi2."
+    my ($self, $text, $opts) = @_;
+
+	my @opts = split(m/\s*(\w+)=/, $opts || '');
+	my %opts = scalar(@opts) ? splice(@opts, 1) : ();
+
+	if ($opts{index}) {
+		die('option "index" not supported by pdfapi2');
+	}
+
+    my $outline = $opts{parent} ?
+						$self->{outlines}->{$opts{parent}}->outline() :
+						$self->{pdf}->outlines()->outline();
+
+	$outline->title($text);
+
+    if (exists($opts{open}) && $opts{open}) {
+        $outline->open();
+    }
+
+    if ($opts{destname}) {
+		$outline->dest($opts{destname});
+    } else {
+		$outline->dest($self->{page});
+	}
+
+	$self->{outlines}->{++$self->{outline_id}} = $outline;
+
+    return $self->{outline_id};
 }
 
 while (my ($k, $v) = each %dispatch) {
