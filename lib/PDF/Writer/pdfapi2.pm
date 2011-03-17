@@ -7,6 +7,7 @@ our $VERSION = '0.01';
 
 use charnames ':full';
 use PDF::API2 0.40;
+use GD;
 
 =head1 NAME
 
@@ -51,6 +52,10 @@ sub save {
 sub open_image {
     my $self = shift; my $p = $self->{pdf};
     my ($type, $file, $foo, $bar) = @_;
+
+	if (uc($type) eq 'GD') {
+		$file = GD::Image->new($file);
+	}
 
     require "PDF/API2/Resource/XObject/Image/\U$type\E.pm";
     return "PDF::API2::Resource::XObject::Image::\U$type\E"->new($p->{pdf}, $file);
