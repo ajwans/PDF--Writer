@@ -231,7 +231,8 @@ sub show_xy {
     my ($str, $x, $y) = @_;
 
     $self->{txt}->translate($x, $y);
-    $self->{txt}->text($str);
+    my $width = $self->{txt}->text($str);
+	return ($x + $width, $y + $self->{txt}{' fontsize'});
 }
 
 sub font_size {
@@ -255,7 +256,11 @@ sub fill_stroke {
 sub close { %{$_[0]} = (); }
 
 sub add_weblink {
-    die "->add_weblink is not implemented yet for pdfapi2."
+	my ($self, $x1, $y1, $x2, $y2, $url) = @_;
+
+	my $annotation = $self->{page}->annotation();
+	$annotation->rect($x1, $y2, $x2, $y1);
+	$annotation->url($url);
 }
 
 sub add_bookmark {
