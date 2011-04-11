@@ -163,17 +163,17 @@ sub show_boxed {
     my $advance_width;
     while (@tokens) {
         push @try, shift(@tokens);
-        $advance_width = $txt->advancewidth("@try");
+        my $chunk = $self->_transform_text(@try);
+        $advance_width = $txt->advancewidth($chunk);
         if ($advance_width >= $w) {
             # overflow only if absolutely neccessary
             pop @try if @try > 1;
 
-            my $chunk = $self->_transform_text("@try");
+            my $chunk = $self->_transform_text(@try);
             $self->_draw_underline($txt->advancewidth($chunk)) if $j =~ /underline/;
 
-            # XXX - sup/sub handling here
             $txt->can($method)->($self->{txt}, $chunk);
-            return length($str) - length($chunk);
+            return length($str) - length(join(' ', @try));
         }
     }
 
@@ -185,7 +185,8 @@ sub show_boxed {
 }
 
 sub _transform_text {
-    my ($self, $text) = @_;
+    my ($self, @text) = @_;
+	my $text = join(' ', @text);
     my $found;
     foreach my $i (0..9) {
         # XXX - handle subscript.
