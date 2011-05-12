@@ -26,7 +26,7 @@ No user-serviceable parts inside.
 my %dispatch = (
     pdf => [qw( stringify info )],
     txt => [qw( font )],
-    gfx => [qw( move line linewidth stroke fill circle arc )],
+    gfx => [qw( move line linewidth stroke fill circle arc rect )],
     ''  => [qw( parameter save_state restore_state end_page )],
 );
 
@@ -239,13 +239,6 @@ sub show_xy {
 sub font_size {
     my $self = shift; my $p = $self->{pdf};
     return $self->{txt}{' fontsize'};
-}
-
-sub rect {
-    my $self = shift; my $p = $self->{pdf};
-    my $gfx = $self->{gfx};
-    $gfx->linewidth(0.2);
-    $gfx->rect(@_);
 }
 
 sub fill_stroke {
