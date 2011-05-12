@@ -26,7 +26,7 @@ No user-serviceable parts inside.
 my %dispatch = (
     pdf => [qw( stringify info )],
     txt => [qw( font )],
-    gfx => [qw( move line linewidth stroke fill circle )],
+    gfx => [qw( move line linewidth stroke fill circle arc )],
     ''  => [qw( parameter save_state restore_state end_page )],
 );
 
